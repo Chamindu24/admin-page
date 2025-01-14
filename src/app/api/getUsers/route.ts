@@ -21,7 +21,7 @@ export async function GET() {
     );
 
     // Return the flattened data as JSON
-    console.log("Fetched users:", flattenedData);
+    // console.log("Fetched users:", flattenedData);
     return NextResponse.json({ users: flattenedData });
   } catch (error) {
     console.error("Error fetching users:", error);
