@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import User from '@/models/userModel'; // User schema
 import { connect } from '@/dbConfig/dbConfig';
 import { sendEmail } from '@/utils/mail.utils';
-import qrcode from 'qrcode';
+import { AwesomeQR } from 'awesome-qr';
 
 connect();
 
@@ -56,7 +56,17 @@ export async function PATCH(req: Request) {
     Total Price: $${approvedUser.totalPrice}
   `;
 
-  const qrCodeBase64 = await qrcode.toDataURL(qrCodeData);
+    // Generate QR code using AwesomeQR
+    const qrCodeBuffer = await new AwesomeQR({
+      text: qrCodeData,
+      size: 500,
+      margin: 10,
+    }).draw();
+
+    if (!qrCodeBuffer) {
+      throw new Error('Failed to generate QR code');
+    }
+    const qrCodeBase64 = qrCodeBuffer.toString('base64');
 
     // Prepare recipient email details
     const sender = { name: 'Celestia 2024', address: 'chamindusathsara28@gmail.com' };
@@ -98,7 +108,7 @@ export async function PATCH(req: Request) {
     const attachments = [
       {
         filename: 'qrcode.png',
-        content: qrCodeBase64.split(',')[1], // Extract base64 content
+        content: qrCodeBase64,
         encoding: 'base64',
         cid: 'qrcode', // Content ID for inline reference
       },
