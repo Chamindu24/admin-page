@@ -69,7 +69,11 @@ export default function UsersList() {
   const handleApprove = async (userId: string) => {
     try {
       setLoading(true);
+      console.log('Attempting to approve user:', userId); // Debug log
+  
       const response = await axios.patch("/api/approveUser", { userId });
+      console.log('Approval response:', response); // Debug log
+  
       if (response.status === 200) {
         alert("User approved, email sent with QR code!");
         
@@ -79,11 +83,22 @@ export default function UsersList() {
           )
         );
       } else {
-        alert("Failed to approve the user.");
+        console.error('Non-200 response:', response);
+        alert(`Failed to approve the user. Status: ${response.status}`);
       }
-    } catch (error) {
-      console.error("Error approving user:", error);
-      alert("An error occurred while approving the user.");
+    } catch (error: any) {
+      // Enhanced error logging
+      console.error("Error approving user:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        }
+      });
+      alert(`An error occurred: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
