@@ -64,7 +64,7 @@ export  function RetroGridDemo() {
     return (
       <FlipText
         className="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#f8f8f2] via-[#cfcfcf] to-[#a1a1a1] animate-gradient-blur drop-shadow-xl md:text-7xl md:leading-[5rem]"
-        word="Celestia'24"
+        word="Celestia'25"
       />
     );
   }
