@@ -5,9 +5,27 @@ import { sendEmail } from '@/utils/mail.utils';
 import { AwesomeQR } from 'awesome-qr';
 
 connect();
+const validateEnv = () => {
+  const requiredEnvVars = [
+    'MAIL_HOST',
+    'MAIL_PORT',
+    'MAIL_USER',
+    'MAIL_PASSWORD',
+  ];
 
+  const missingVars = requiredEnvVars.filter(
+    (varName) => !process.env[varName]
+  );
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missingVars.join(', ')}`
+    );
+  }
+};
 export async function PATCH(req: Request) {
   try {
+    validateEnv(); // Validate environment variables first
     const body = await req.json();
     const { userId } = body;
 
@@ -115,6 +133,18 @@ export async function PATCH(req: Request) {
     ];
 
     // Send email
+
+
+
+
+    console.log("Attempting to send email with configuration:", {
+      host: process.env.MAIL_HOST,
+      port: process.env.MAIL_PORT,
+      secure: process.env.SMTP_PORT === "465",
+      user: process.env.MAIL_USER ? '✓ Present' : '✗ Missing',
+      pass: process.env.MAIL_PASSWORD ? '✓ Present' : '✗ Missing',
+    });
+
     const emailResult = await sendEmail({
       sender,
       recipients: [recipient],
@@ -123,18 +153,44 @@ export async function PATCH(req: Request) {
       attachments,
     });
 
+
+
+
+    // const emailResult = await sendEmail({
+    //   sender,
+    //   recipients: [recipient],
+    //   subject,
+    //   message: emailBody,
+    //   attachments,
+    // });
+
     console.log("Email sent successfully:", emailResult);
 
+
+ 
     return NextResponse.json({
       message: 'User approved and email sent successfully',
       approvedUser,
       emailResult,
     });
-  } catch (error) {
-    console.error('Error processing PATCH request:', error);
-    return NextResponse.json(
-      { error: true, message: 'Internal server error.' },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    console.error('Error processing PATCH request:', {
+      message: error.message,
+      stack: error.stack,
+    });
+
+
+
+
+
+
+
+
+    // return NextResponse.json({
+    //   message: 'User approved and email sent successfully',
+    //   approvedUser,
+    //   emailResult,
+    // });
+  
   }
 }
