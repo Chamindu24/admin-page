@@ -25,7 +25,7 @@ export default function Page() {
       {/* Content Section */}
       <div className="z-10 flex flex-col items-center mt-40">
         {/* Confetti Component */}
-        <ConfettiFireworks handleNavigateToUsers={handleNavigateToUsers} />
+        {/* <ConfettiFireworks handleNavigateToUsers={handleNavigateToUsers} /> */}
       </div>
     </div>
   );
