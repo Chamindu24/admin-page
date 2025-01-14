@@ -1,101 +1,100 @@
-import Image from "next/image";
+"use client";
+
+import { useRouter } from "next/navigation"; // Use next/navigation for App Router
+import RetroGrid from "@/components/ui/retro-grid"; // Import the RetroGrid component
+import confetti from "canvas-confetti";
+import { Button } from "@/components/ui/button"; // Import your button component
+import FlipText from "@/components/ui/flip-text";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter(); // Initialize the router
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const handleNavigateToUsers = () => {
+    // Navigate to the /users page when the button is clicked
+    router.push("/users");
+  };
+
+  return (
+    <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#121212]">
+      {/* FlipText Component */}
+      <div className="mt-24"> {/* Adjusted margin-top for gap */}
+        <FlipTextDemo />
+      </div>
+      
+      {/* Background Component */}
+      <div className="absolute inset-0 z-0">
+        <RetroGridDemo />
+      </div>
+
+      {/* Content Section */}
+      <div className="z-10 flex flex-col items-center mt-40">
+        {/* Confetti Component */}
+        <ConfettiFireworks handleNavigateToUsers={handleNavigateToUsers} />
+      </div>
     </div>
+  );
+}
+
+export function RetroGridDemo() {
+  return (
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+      <RetroGrid className="opacity-20" />
+    </div>
+  );
+}
+
+// Confetti Component
+export function ConfettiFireworks({ handleNavigateToUsers }: { handleNavigateToUsers: () => void }) {
+  const handleClick = () => {
+    // Trigger confetti
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+
+    // Navigate to the users page after confetti is triggered
+    handleNavigateToUsers();
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleClick}
+        className="rounded-full bg-gradient-to-r from-[#282c34] via-[#21252b] to-[#1a1d23] px-10 py-4 text-white font-bold shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39414c]"
+      >
+        Go to Users
+      </button>
+    </div>
+  );
+}
+
+export function FlipTextDemo() {
+  return (
+    <FlipText
+      className="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#f8f8f2] via-[#cfcfcf] to-[#a1a1a1] animate-gradient-blur drop-shadow-xl md:text-7xl md:leading-[5rem]"
+      word="Celestia'25"
+    />
   );
 }
