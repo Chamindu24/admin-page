@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfettiFireworks, FlipTextDemo, RetroGridDemo } from "@/components/Home/Hero";
+import {  FlipTextDemo, RetroGridDemo } from "@/components/Home/Hero";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
 export default function Page() {
   const router = useRouter(); // Initialize the router
@@ -24,10 +24,13 @@ export default function Page() {
 
       {/* Content Section */}
       <div className="z-10 flex flex-col items-center mt-40">
-        {/* Confetti Component */}
-        <ConfettiFireworks handleNavigateToUsers={handleNavigateToUsers} />
+        <button
+          onClick={handleNavigateToUsers}
+          className="rounded-full bg-gradient-to-r from-[#282c34] via-[#21252b] to-[#1a1d23] px-10 py-4 text-white font-bold shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39414c]"
+        >
+          Go to Users
+        </button>
       </div>
     </div>
   );
 }
-
