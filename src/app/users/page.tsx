@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { Button } from "@/components/ui/button";
 import {
   flexRender,
@@ -47,10 +48,53 @@ interface User {
   index: string; // Add index from the parent order
 }
 
+// Modal component for image preview
+// Modal component for image preview
+function ImageModal({
+  isOpen,
+  imageURL,
+  onClose,
+}: {
+  isOpen: boolean;
+  imageURL: string;
+  onClose: () => void;
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center  bg-black bg-opacity-50">
+      {/* Blurred background */}
+      <div
+        className="absolute inset-0 bg-center bg-cover blur-3xl animate-pulse"
+
+      ></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-900 to-transparent opacity-75"></div>
+      {/* Modal content */}
+      <div className="relative bg-gray-800 bg-opacity-80 rounded-lg shadow-2xl p-8 border border-gray-700">
+        <button
+          onClick={onClose}
+           className="absolute top-1 right-1 bg-red-500 text-white px-2 py-0.5 rounded-full hover:bg-red-600 transition duration-300"
+        >
+          ✖
+        </button>
+        <div className="relative overflow-hidden">
+          <img
+            src={imageURL}
+            alt="Preview"
+            className="w-[800px] h-[500px] object-fill rounded-lg  shadow-md transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 
 export default function UsersList() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalImageURL, setModalImageURL] = useState<string | null>(null);
 
   // Fetch data
   useEffect(() => {
@@ -147,7 +191,14 @@ export default function UsersList() {
         <img
           src={row.original.imageURL}
           alt={row.original.username}
-          style={{ width: "150px", height: "auto", borderRadius: "10px", border: "2px solid #ccc" }}
+          style={{
+            width: "150px",
+            height: "100px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            cursor: "pointer",
+          }}
+          onClick={() => setModalImageURL(row.original.imageURL)}
         />
       ),
     },
@@ -179,12 +230,7 @@ export default function UsersList() {
       header: "Actions",
       cell: ({ row }) => (
         <div className="flex flex-col gap-2">
-          <button
-            onClick={() => window.open(row.original.imageURL, "_blank")}
-            className="bg-gradient-to-r from-teal-500 via-green-500 to-teal-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-green-600 hover:to-teal-800 hover:shadow-xl transition-all duration-300 ease-in-out"
-          >
-            🌟 Preview Photo
-          </button>
+          
           {!row.original.isApproved && (
             <button
               onClick={() => handleApprove(row.original._id)}
@@ -200,7 +246,7 @@ export default function UsersList() {
             onClick={() => handleDelete(row.original._id)}
             className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-all duration-300 ease-in-out"
           >
-            ❌ Delete
+            ❌ Reject
           </button>
 
         </div>
@@ -262,6 +308,11 @@ export default function UsersList() {
           </TableBody>
         </Table>
       </div>
+      <ImageModal
+        isOpen={!!modalImageURL}
+        imageURL={modalImageURL || ""}
+        onClose={() => setModalImageURL(null)}
+      />
     </div>
   );
 }
