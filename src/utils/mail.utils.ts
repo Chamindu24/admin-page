@@ -2,15 +2,29 @@ import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
+// const transpor = nodemailer.createTransport({
+//   host: process.env.MAIL_HOST,
+//   port: Number(process.env.MAIL_PORT),
+//   secure: process.env.SMTP_PORT === "465", // Use secure for port 465 // Use secure connection if not in development
+//   auth: {
+//     user: process.env.MAIL_USER,
+//     pass: process.env.MAIL_PASSWORD,
+//   },
+// } as SMTPTransport.Options);
+
+
 const transport = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
-  port: Number(process.env.MAIL_PORT),
-  secure: process.env.NODE_ENV !== 'development', // Use secure connection if not in development
+  port: Number(process.env.MAIL_PORT) || 587,
+  secure: process.env.SMTP_PORT === "465",
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASSWORD,
   },
+  debug: process.env.NODE_ENV !== 'production', // Enable debug logs in non-production
+  logger: process.env.NODE_ENV !== 'production', // Enable logging in non-production
 } as SMTPTransport.Options);
+
 
 export interface EmailAttachment {
   filename: string;
