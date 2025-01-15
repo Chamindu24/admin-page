@@ -8,7 +8,7 @@ import FlipText from "@/components/ui/flip-text";
 export function RetroGridDemo() {
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
-      <RetroGrid className="opacity-20" />
+      <RetroGrid className="opacity-15" />
     </div>
   );
 }
@@ -22,4 +22,3 @@ export function RetroGridDemo() {
       />
     );
   }
-  

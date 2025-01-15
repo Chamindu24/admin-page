@@ -31,6 +31,9 @@ export async function PATCH(req: Request) {
     const approvedUser = updatedOrder.users.find((user: any) => user._id.toString() === userId);
     if (!approvedUser) return NextResponse.json({ error: 'Approved user not found' }, { status: 404 });
 
+    const seatNumber = updatedOrder.seats[updatedOrder.users.indexOf(approvedUser)] || "N/A";
+    approvedUser.seatNumber = seatNumber;
+
     // Generate QR Code
     const qrCodeData = `
       Username: ${approvedUser.username}

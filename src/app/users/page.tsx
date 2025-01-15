@@ -21,11 +21,15 @@ import {
 // Spinner component for loading state
 function Spinner() {
   return (
-    <div className="flex justify-center items-center py-4">
-      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex justify-center items-center py-10">
+      <div
+         className="w-10 h-10 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"
+       ></div>
     </div>
   );
 }
+
+
 
 // Define types for the user object
 interface User {
@@ -129,7 +133,11 @@ export default function UsersList() {
 
   // Table columns definition
   const columns: ColumnDef<User>[] = [
-    { accessorKey: "username", header: "Username" },
+    {
+      accessorKey: "username",
+      header: "Username",
+      cell: ({ row }) => <span className="font-bold">{row.original.username}</span>,
+    },
     { accessorKey: "index", header: "IndexNum " },
     { accessorKey: "seatNumber", header: "Seat Number" },
     {
@@ -139,14 +147,18 @@ export default function UsersList() {
         <img
           src={row.original.imageURL}
           alt={row.original.username}
-          style={{ width: "100px", height: "auto", borderRadius: "8px" }}
+          style={{ width: "150px", height: "auto", borderRadius: "10px", border: "2px solid #ccc" }}
         />
       ),
     },
     {
       accessorKey: "isApproved",
       header: "Approval Status",
-      cell: ({ row }) => (row.original.isApproved ? "Approved" : "Not Approved"),
+      cell: ({ row }) => (
+        <span className={row.original.isApproved ? "text-green-400 font-extrabold" : "text-red-400 font-extrabold"}>
+          {row.original.isApproved ? "Approved" : "Not Approved"}
+        </span>
+      ),
     },
     {
       accessorKey: "otherDetails",
@@ -166,11 +178,10 @@ export default function UsersList() {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <button
             onClick={() => window.open(row.original.imageURL, "_blank")}
-            className="bg-gradient-to-r from-green-400 to-green-600 text-white px-1 py-1 text-sm rounded shadow hover:from-green-500 hover:to-green-700 hover:shadow-lg transition-all duration-300 ease-in-out"
-
+            className="bg-gradient-to-r from-teal-500 via-green-500 to-teal-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-green-600 hover:to-teal-800 hover:shadow-xl transition-all duration-300 ease-in-out"
           >
             🌟 Preview Photo
           </button>
@@ -178,8 +189,8 @@ export default function UsersList() {
             <button
               onClick={() => handleApprove(row.original._id)}
               className={`${
-                loading ? "cursor-not-allowed bg-gray-400" : "bg-gradient-to-r from-blue-400 to-blue-600"
-              } text-white px-1 py-1 text-sm rounded-lg shadow-lg hover:from-blue-500 hover:to-blue-700 hover:shadow-xl transition-all duration-300 ease-in-out`}
+                loading ? "cursor-not-allowed bg-gray-600" : "bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+              } text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-blue-600 hover:to-blue-800 hover:shadow-xl transition-all duration-300 ease-in-out`}
               disabled={loading}
             >
               {loading ? "Approving..." : "✅ Approve"}
@@ -187,7 +198,7 @@ export default function UsersList() {
           )}
           <button
             onClick={() => handleDelete(row.original._id)}
-            className="bg-gradient-to-r from-red-400 to-red-600 text-white px-1 py-1 text-sm rounded-lg shadow-lg hover:from-red-500 hover:to-red-700 hover:shadow-xl transition-all duration-300 ease-in-out"
+            className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-all duration-300 ease-in-out"
           >
             ❌ Delete
           </button>
@@ -206,15 +217,15 @@ export default function UsersList() {
   });
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Visitors List</h1>
-      <div className="rounded-md border">
+    <div className="bg-gradient-to-br from-black via-gray-900 to-black min-h-screen text-gray-100 p-6 transition-all duration-300 ">
+      <h1 className="text-2xl font-bold mb-4 text-center">Users List</h1>
+      <div className="rounded-md overflow-hidden border border-gray-600 shadow-lg">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-800 text-gray-300">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}className=" font-bold text-lg" >
+                  <TableHead key={header.id}className= "font-bold text-lg text-gray-100 bg-gray-800 p-4">
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
@@ -233,9 +244,9 @@ export default function UsersList() {
               </TableRow>
             ) : users.length > 0 ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}  className="hover:bg-gray-100 ">
+                <TableRow key={row.id}  className="hover:bg-gray-800 transition-colors duration-200 ease-in-out">
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-base" style={{ width: `${cell.column.columnDef.size || 100}px` }}>
+                    <TableCell key={cell.id} className="text-base text-gray-300 p-4" style={{ width: `${cell.column.columnDef.size || 100}px` }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -243,8 +254,8 @@ export default function UsersList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-4">
-                  No data available
+                <TableCell colSpan={columns.length} className="text-center py-4 text-gray-400">
+                  
                 </TableCell>
               </TableRow>
             )}

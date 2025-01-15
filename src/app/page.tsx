@@ -11,7 +11,7 @@ export default function Page() {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-gradient-to-br from-[#020203] via-[#0c0c29] to-[#030306]">
+    <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-gradient-to-br from-[#000000] via-[#09090c] to-[#000000]">
       {/* FlipText Component */}
       <div className="mt-24 "> {/* Adjusted margin-top for gap */}
         <FlipTextDemo />
@@ -26,11 +26,13 @@ export default function Page() {
       <div className="z-10 flex flex-col items-center mt-40">
         <button
           onClick={handleNavigateToUsers}
-          className="rounded-full bg-gradient-to-r from-[#282c34] via-[#21252b] to-[#1a1d23] px-10 py-4 text-white font-bold shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39414c]"
+          className="rounded-full bg-gradient-to-r from-[#000000] via-[#21252b] to-[#000000] px-10 py-4 text-white font-bold shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#39414c]"
         >
           Go to Users
         </button>
       </div>
+
+      
     </div>
   );
 }
