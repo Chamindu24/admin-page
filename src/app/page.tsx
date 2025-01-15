@@ -11,9 +11,9 @@ export default function Page() {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#121212]">
+    <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-gradient-to-br from-[#020203] via-[#0c0c29] to-[#030306]">
       {/* FlipText Component */}
-      <div className="mt-24"> {/* Adjusted margin-top for gap */}
+      <div className="mt-24 "> {/* Adjusted margin-top for gap */}
         <FlipTextDemo />
       </div>
       
