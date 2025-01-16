@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
       seatNumber: { type: String, default: undefined }, // Optional field
       imageURL: { type: String, required: true }, // New field
       isApproved: { type: Boolean, required: [true, "Approval status is required"], default: false }, // New field
+      isRejected: { type: Boolean, default: false },
     },
   ],
   createdAt: { type: Date, default: Date.now },

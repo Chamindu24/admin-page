@@ -46,6 +46,7 @@ interface User {
   imageURL: string;
   isApproved: boolean;
   index: string; // Add index from the parent order
+  isRejected: boolean; // Add status property
 }
 
 // Modal component for image preview
@@ -152,27 +153,34 @@ export default function UsersList() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!id) {
-      console.error("No ID provided for deletion");
-      return;
-    }
-    console.log("Attempting to delete user with ID:", id); // Log the user ID
+  
+
+  const handleReject = async (userId: string) => {
     try {
-      const response = await axios.delete(`/api/getUsers?id=${id}`);
-      console.log("Response from delete API:", response);
-      
+      setLoading(true);
+  
+      // Make API call to reject the user and update the seat booking status
+      const response = await axios.patch("/api/rejectUser", { userId });
+  
       if (response.status === 200) {
-        alert("User deleted successfully!");
-        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+        alert("User rejected and seat is unbooked!");
+  
+        // Update the users state to reflect the rejection
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId ? { ...user, isRejected: true, isApproved: false } : user)
+        );
       } else {
-        alert("Failed to delete the user.");
+        alert("Failed to reject the user.");
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
-      alert("An error occurred while deleting the user.");
+      console.error("Error rejecting user:", error);
+      alert("An error occurred while rejecting the user.");
+    } finally {
+      setLoading(false);
     }
   };
+  
   
 
   // Table columns definition
@@ -205,11 +213,15 @@ export default function UsersList() {
     {
       accessorKey: "isApproved",
       header: "Approval Status",
-      cell: ({ row }) => (
-        <span className={row.original.isApproved ? "text-green-400 font-extrabold" : "text-red-400 font-extrabold"}>
-          {row.original.isApproved ? "Approved" : "Not Approved"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        if (row.original.isApproved) {
+          return <span className="text-green-400 font-extrabold">Approved</span>;
+        } else if (row.original.isRejected) {
+          return <span className="text-red-400 font-extrabold">Rejected</span>;
+        } else {
+          return <span className="text-blue-500 font-extrabold">Pending</span>;
+        }
+      },
     },
     {
       accessorKey: "otherDetails",
@@ -243,7 +255,7 @@ export default function UsersList() {
             </button>
           )}
           <button
-            onClick={() => handleDelete(row.original._id)}
+            onClick={() => handleReject(row.original._id)}
             className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-all duration-300 ease-in-out"
           >
             ❌ Reject
@@ -284,7 +296,7 @@ export default function UsersList() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-4">
+                <TableCell colSpan={columns.length} className="text-center py-8">
                   <Spinner />
                 </TableCell>
               </TableRow>
