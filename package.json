@@ -33,8 +33,10 @@
     "qrcode.react": "^4.2.0",
     "react": "^19",
     "react-dom": "^19",
+    "react-tsparticles": "^2.12.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tsparticles": "^3.7.1"
   },
   "devDependencies": {
     "@types/node": "^22",
