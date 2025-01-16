@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
+export const dynamic = "force-dynamic"; 
+export const revalidate = 0; // Disables revalidation caching
 
 // Ensure MongoDB is connected
 connect();
@@ -22,7 +24,15 @@ export async function GET() {
 
     // Return the flattened data as JSON
     // console.log("Fetched users:", flattenedData);
-    return NextResponse.json({ users: flattenedData });
+    return NextResponse.json({ users: flattenedData },
+                                 {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+          "Surrogate-Control": "no-store",
+        }
+      });
   } catch (error) {
     console.error("Error fetching users:", error);
     return NextResponse.json({ error: "Error fetching users" }, { status: 500 });
@@ -68,4 +78,3 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Error deleting user" }, { status: 500 });
   }
 }
-
