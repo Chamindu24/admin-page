@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import User from '@/models/userModel';
 import Seat from '@/models/seatModel'; // Assuming this is the Seat model file path.
 import { connect } from '@/dbConfig/dbConfig';
+import { sendEmail } from '@/utils/mail.utils';
 
 connect();
 
@@ -67,6 +68,53 @@ export async function PATCH(req: Request) {
     } else {
         console.log("No seat number associated with the rejected user.");
     }
+
+    // Send Rejection Email
+    const sender = { name: "Celestia 2024", address: "chamindusathsara28@gmail.com" };
+    const recipient = { name: rejectedUser.username, address: rejectedUser.email };
+    const subject = "Your Order Has Been Rejected ❌";
+    const emailBody = `
+      <div style="font-family: Arial, sans-serif; text-align: center; max-width: 600px; margin: auto; background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+      <div style="background: linear-gradient(135deg, #E24A4A, #B22222); padding: 20px;">
+        <h1 style="font-size: 28px; color: #fff; margin: 0;">Celestia 2024</h1>
+        <h2 style="font-size: 20px; color: #FFD700; margin: 5px 0;">Rejection Notice</h2>
+      </div>
+      
+      <div style="padding: 25px; color: #555;">
+        <p style="font-size: 18px; color: #333; margin: 8px 0;">
+          Hello, <strong>${rejectedUser.username}</strong>
+        </p>
+        <p style="font-size: 16px; line-height: 1.5; margin: 15px 0;">
+          We regret to inform you that your order has been <strong style="color: #E24A4A;">rejected</strong>. If you believe this was a mistake, please contact our support team for assistance.
+        </p>
+
+        <div style="background-color: #FFECEC; padding: 15px; border-radius: 8px; margin: 20px 0; display: inline-block;">
+          <p style="font-size: 16px; color: #B22222; margin: 0;">
+            <strong>Seat Number:</strong> ${seatNumber ? seatNumber : "Not Assigned"}
+          </p>
+        </div>
+
+        <p style="font-size: 14px; color: #888; margin: 20px 0;">
+          We truly appreciate your interest in <strong>Celestia 2024</strong> and hope to see you at our future events.
+        </p>
+        
+        
+      </div>
+
+      <div style="background-color: #f4f4f4; padding: 12px; font-size: 12px; color: #555;">
+        <p style="margin: 0;">If you have any questions, simply reply to this email.</p>
+      </div>
+    </div>
+    `;
+
+    await sendEmail({
+      sender,
+      recipients: [recipient],
+      subject,
+      message: emailBody,
+    });
+
+    console.log(`User ${userId} rejected. Seat ${seatNumber} unbooked.`);
 
     return NextResponse.json({ message: "User rejected successfully." });
   } catch (error) {

@@ -240,29 +240,30 @@ export default function UsersList() {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex flex-col gap-2">
-          
-          {!row.original.isApproved && (
-            <button
-              onClick={() => handleApprove(row.original._id)}
-              className={`${
-                loading ? "cursor-not-allowed bg-gray-600" : "bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
-              } text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-blue-600 hover:to-blue-800 hover:shadow-xl transition-all duration-300 ease-in-out`}
-              disabled={loading}
-            >
-              {loading ? "Approving..." : "✅ Approve"}
-            </button>
-          )}
-          <button
-            onClick={() => handleReject(row.original._id)}
-            className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-all duration-300 ease-in-out"
-          >
-            ❌ Reject
-          </button>
-
-        </div>
-      ),
+      cell: ({ row }) => {
+        const { _id, isApproved, isRejected } = row.original;
+    
+        return (
+          <div className="flex flex-col gap-2">
+            {!isApproved && !isRejected && (
+              <>
+                <button
+                  onClick={() => handleApprove(_id)}
+                  className={`bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-blue-600 hover:to-blue-800 hover:shadow-xl transition-all duration-300 ease-in-out`}
+                >
+                  ✅ Approve
+                </button>
+                <button
+                  onClick={() => handleReject(_id)}
+                  className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-3 py-1 text-sm font-semibold rounded shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-all duration-300 ease-in-out"
+                >
+                  ❌ Reject
+                </button>
+              </>
+            )}
+          </div>
+        );
+      },
     },
   ];
   

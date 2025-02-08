@@ -45,32 +45,46 @@ export async function PATCH(req: Request) {
     // Send Email
     const sender = { name: 'Celestia 2024', address: 'chamindusathsara28@gmail.com' };
     const recipient = { name: approvedUser.username, address: approvedUser.email };
-    const subject = 'Your Order Has Been Approved! 🎉';
+    const subject = 'Your Order Has Been Approved!';
     const emailBody = `
-      <div style="font-family: Arial, sans-serif; text-align: center; max-width: 600px; margin: auto;">
-        <div style="background-color: #f9f9f9; padding: 20px;">
-          <h1 style="font-size: 28px; color: #4A90E2; margin: 0;">Celestia 2024</h1>
-          <h2 style="font-size: 20px; color: #333; margin: 5px 0;">Approval Notification</h2>
+      <div style="font-family: Arial, sans-serif; text-align: center; max-width: 600px; margin: auto; background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+        <div style="background: linear-gradient(135deg, #4A90E2, #1E66D0); padding: 20px;">
+          <h1 style="font-size: 28px; color: #fff; margin: 0;">Celestia 2024</h1>
+          <h2 style="font-size: 20px; color: #FFD700; margin: 5px 0;">You're Approved! 🎉</h2>
         </div>
-        <div style="padding: 20px; color: #555;">
-          <p style="font-size: 18px; color: #333; margin: 8px 0;">Greetings, <strong>${approvedUser.username}</strong>!</p>
-          <p style="font-size: 16px; line-height: 1.5;">
-            We are thrilled to inform you that your account has been successfully approved! Below are the details of your order:
+        
+        <div style="padding: 25px; color: #555;">
+          <p style="font-size: 18px; color: #333; margin: 8px 0;">
+            Greetings, <strong>${approvedUser.username}</strong>!
           </p>
-          <p style="font-size: 16px; color: #4A90E2; margin: 10px 0;">
-            <strong>Order Details:</strong> ${approvedUser.foodList.join(', ')}
+          <p style="font-size: 16px; line-height: 1.5; margin: 15px 0;">
+            We are delighted to inform you that your registration has been <strong style="color: #4A90E2;">successfully approved</strong>! Below are the details of your order:
           </p>
-          <p style="font-size: 16px; color: #4A90E2; margin: 10px 0;">
-            <strong>Seat Number:</strong> ${approvedUser.seatNumber}
-          </p>
+
+          <div style="background-color: #E8F4FF; padding: 15px; border-radius: 8px; margin: 20px 0; display: inline-block;">
+            <p style="font-size: 16px; color: #1E66D0; margin: 0;">
+              <strong>Order Details:</strong> ${approvedUser.foodList.join(', ')}
+            </p>
+            <p style="font-size: 16px; color: #1E66D0; margin: 10px 0;">
+              <strong>Seat Number:</strong> ${approvedUser.seatNumber}
+            </p>
+          </div>
+
           <div style="margin: 20px 0;">
             <img src="cid:qrcode" alt="QR Code" style="width: 200px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" />
           </div>
-          <p style="font-size: 14px; color: #888; margin: 15px 0;">
-            Thank you for choosing <strong>Celestia 2024!</strong> We can’t wait to see you at the event.
+
+          <p style="font-size: 14px; color: #888; margin: 20px 0;">
+            Thank you for choosing <strong>Celestia 2024!</strong> We look forward to celebrating with you.
           </p>
+          
+          <a href="https://leo-candle-night.vercel.app/" 
+            style="display: inline-block; text-decoration: none; background-color: #4A90E2; color: #fff; padding: 12px 20px; border-radius: 5px; font-size: 16px; font-weight: bold;">
+            View Event Details
+          </a>
         </div>
-        <div style="background-color: #f4f4f4; padding: 10px; color: #555; font-size: 12px; margin-top: 8px;">
+
+        <div style="background-color: #f4f4f4; padding: 12px; font-size: 12px; color: #555;">
           <p style="margin: 0;">*** Please do not share this email or the attached QR code with anyone. ***</p>
         </div>
       </div>
