@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React,{ useEffect, useState,useMemo } from "react";
 import axios from "axios";
 import {
   Table,
@@ -11,13 +11,19 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
 import {
   flexRender,
   ColumnDef,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
+ 
+  
 } from "@tanstack/react-table";
+
+
+
 
 // Spinner component for loading state
 function Spinner() {
@@ -50,40 +56,45 @@ interface User {
 }
 
 // Modal component for image preview
-// Modal component for image preview
-function ImageModal({
+
+
+function FileModal({
   isOpen,
-  imageURL,
+  fileURL,
+  fileType,
   onClose,
 }: {
   isOpen: boolean;
-  imageURL: string;
+  fileURL: string;
+  fileType: "image" | "pdf" | null;
   onClose: () => void;
 }) {
-  if (!isOpen) return null;
+  if (!isOpen || !fileURL) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center  bg-black bg-opacity-50">
-      {/* Blurred background */}
-      <div
-        className="absolute inset-0 bg-center bg-cover blur-3xl animate-pulse"
-
-      ></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-900 to-transparent opacity-75"></div>
-      {/* Modal content */}
       <div className="relative bg-gray-800 bg-opacity-80 rounded-lg shadow-2xl p-8 border border-gray-700">
         <button
           onClick={onClose}
-           className="absolute top-1 right-1 bg-red-500 text-white px-2 py-0.5 rounded-full hover:bg-red-600 transition duration-300"
+          className="absolute top-1 right-1 bg-red-500 text-white px-2 py-0.5 rounded-full hover:bg-red-600 transition duration-300"
         >
           ✖
         </button>
         <div className="relative overflow-hidden">
-          <img
-            src={imageURL}
-            alt="Preview"
-            className="w-[800px] h-[500px] object-fill rounded-lg  shadow-md transition-transform duration-300 hover:scale-105"
-          />
+          {fileType === "image" ? (
+            <img
+              src={fileURL}
+              alt="Preview"
+              className="w-[800px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
+            />
+          ) : fileType === "pdf" ? (
+            <iframe
+              src={fileURL}
+              className="w-[800px] h-[500px] rounded-lg border border-gray-700"
+              title="PDF Preview"
+            ></iframe>
+          ) : null}
         </div>
       </div>
     </div>
@@ -95,15 +106,18 @@ function ImageModal({
 export default function UsersList() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [modalImageURL, setModalImageURL] = useState<string | null>(null);
-
+  const [filterValue, setFilterValue] = useState<string>(""); // Add filter state
+  const [modalFileURL, setModalFileURL] = useState<string | null>(null);
+  const [modalFileType, setModalFileType] = useState<"image" | "pdf" | null>(null);
+  
   // Fetch data
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         const response = await axios.get("/api/getUsers");
-        setUsers(response.data.users); // Access the "users" array from the response
+        // Reverse the users array to show newly added users at the top
+        setUsers(response.data.users.reverse()); // Reverse the array here
         
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -180,6 +194,17 @@ export default function UsersList() {
       setLoading(false);
     }
   };
+
+  // Filter users based on the filter value (username and NIC number)
+  const filteredUsers = useMemo(
+    () =>
+      users.filter(
+        (user) =>
+          user.username.toLowerCase().includes(filterValue.toLowerCase()) ||
+          user.index.toLowerCase().includes(filterValue.toLowerCase())
+      ),
+    [users, filterValue]
+  );
   
   
 
@@ -190,36 +215,102 @@ export default function UsersList() {
       header: "Username",
       cell: ({ row }) => <span className="font-bold">{row.original.username}</span>,
     },
-    { accessorKey: "index", header: "IndexNum " },
+    { accessorKey: "index", header: "NIC Number" },
     { accessorKey: "seatNumber", header: "Seat Number" },
     {
-      accessorKey: "imageURL",
-      header: "Image",
-      cell: ({ row }) => (
-        <img
-          src={row.original.imageURL}
-          alt={row.original.username}
-          style={{
-            width: "150px",
-            height: "100px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            cursor: "pointer",
-          }}
-          onClick={() => setModalImageURL(row.original.imageURL)}
-        />
-      ),
+      accessorKey: "fileURL",
+      header: "Slip",
+      cell: ({ row }) => {
+        const fileURL = row.original.imageURL;
+        if (!fileURL) return <span className="text-gray-400">No file</span>;
+    
+        const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileURL);
+        const isPDF = /\.pdf$/i.test(fileURL);
+    
+        return isImage ? (
+          <img
+            src={fileURL}
+            alt="Uploaded File"
+            style={{
+              width: "150px",
+              height: "100px",
+              borderRadius: "10px",
+              border: "1px solid #ccc",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setModalFileURL(fileURL);
+              setModalFileType("image");
+            }}
+          />
+        ) : isPDF ? (
+          <div className="flex flex-col items-center">
+            <iframe
+              src={fileURL}
+              className="max-w-xs w-full rounded-lg border border-gray-700"
+              width="100px"
+              height="120px"
+              title="PDF Preview"
+              onClick={() => {
+                setModalFileURL(fileURL);
+                setModalFileType("pdf");
+              }}
+            ></iframe>
+            <button
+            className="flex items-center gap-2 text-gray-400 font-semibold hover:text-gray-100 transition duration-200 mt-2"
+            onClick={() => {
+              setModalFileURL(fileURL);
+              setModalFileType("pdf");
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12 2a1 1 0 0 1 1 1v8h8a1 1 0 0 1 0 2h-8v8a1 1 0 0 1-2 0v-8H3a1 1 0 0 1 0-2h8V3a1 1 0 0 1 1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Preview PDF
+          </button>
+          </div>
+        ) : (
+          <span className="text-gray-400">Unsupported file</span>
+        );
+      },
     },
     {
       accessorKey: "isApproved",
       header: "Approval Status",
       cell: ({ row }) => {
-        if (row.original.isApproved) {
-          return <span className="text-green-400 font-extrabold">Approved</span>;
-        } else if (row.original.isRejected) {
-          return <span className="text-red-400 font-extrabold">Rejected</span>;
+        const isApproved = row.original.isApproved;
+        const isRejected = row.original.isRejected;
+        
+        if (isApproved) {
+          return (
+            <span className="flex items-center text-green-500 font-extrabold hover:text-green-400 transition-all duration-300">
+              
+              Approved
+            </span>
+          );
+        } else if (isRejected) {
+          return (
+            <span className="flex items-center text-red-500 font-extrabold hover:text-red-400 transition-all duration-300">
+              
+              Rejected
+            </span>
+          );
         } else {
-          return <span className="text-blue-500 font-extrabold">Pending</span>;
+          return (
+            <span className="flex items-center text-blue-500 font-extrabold hover:text-blue-400 transition-all duration-300">
+              
+              Pending
+            </span>
+          );
         }
       },
     },
@@ -230,8 +321,8 @@ export default function UsersList() {
         <div>
           <p>Email: {row.original.email}</p>
           <p>WhatsApp: {row.original.whatsapp}</p>
-          <p>Department: {row.original.department}</p>
-          <p>Batch: {row.original.batch}</p>
+          <p>Membership Status: {row.original.department}</p>
+          
           <p>Food List: {row.original.foodList.join(", ") || "N/A"}</p>
           <p>Total Price: ${row.original.totalPrice}</p>
         </div>
@@ -269,15 +360,68 @@ export default function UsersList() {
   
 
   const table = useReactTable({
-    data: users || [],
+    data: filteredUsers || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     
   });
 
+  
+
+
+
   return (
     <div className="bg-gradient-to-br from-black via-gray-900 to-black min-h-screen text-gray-100 p-6 transition-all duration-300 ">
-      <h1 className="text-2xl font-bold mb-4 text-center">Users List</h1>
+      <h1 className="text-3xl  font-semibold mb-6 text-center ">
+        <p className="text-gray-100 mb-2 tracking-widest bg-gradient-to-r from-yellow-100 via-yellow-500 to-yellow-100 text-transparent bg-clip-text">Leo Candle Night Celestia 2025</p>
+        <p className="text-2xl font-medium text-gray-300 tracking-wider" >The Guest List of Our Grand Dinner Party </p>
+      </h1>
+      <div className="flex items-center py-5 relative">
+  <div className="relative max-w-sm w-full">
+    {/* Search icon */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+        clipRule="evenodd"
+      />
+    </svg>
+
+    {/* Input field */}
+    <Input
+      placeholder="Filter by username and NIC number"
+      value={filterValue}
+      onChange={(event) => setFilterValue(event.target.value)}
+      className="pl-10 pr-10 w-full rounded-lg border border-gray-400 bg-gray-800 text-gray-100 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition-all duration-300"
+    />
+
+    {/* Clear button (visible only when there's input) */}
+    {filterValue && (
+      <button
+        onClick={() => setFilterValue("")}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors duration-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            fillRule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+    )}
+  </div>
+</div>
       <div className="rounded-md overflow-hidden border border-gray-600 shadow-lg">
         <Table>
           <TableHeader className="bg-gray-800 text-gray-300">
@@ -321,10 +465,14 @@ export default function UsersList() {
           </TableBody>
         </Table>
       </div>
-      <ImageModal
-        isOpen={!!modalImageURL}
-        imageURL={modalImageURL || ""}
-        onClose={() => setModalImageURL(null)}
+      <FileModal
+        isOpen={!!modalFileURL}
+        fileURL={modalFileURL || ""}
+        fileType={modalFileType}
+        onClose={() => {
+          setModalFileURL(null);
+          setModalFileType(null);
+        }}
       />
     </div>
   );
