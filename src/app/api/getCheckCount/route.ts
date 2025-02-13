@@ -35,13 +35,18 @@ export async function GET() {
     // Calculate the check-in percentage
     const checkedInPercentage = totalCount ? (checkedInCount / totalCount) * 100 : 0;
 
-    // Return both the users and the calculated percentage
     return NextResponse.json({
       users: approvedUsers,
       checkedInUsers,
       checkedInPercentage,
       checkedInCount,
       totalCount
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
   } catch (error) {
     console.error("GET Error:", error);
