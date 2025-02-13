@@ -76,3 +76,16 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes progressAnimation {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-progress {
+  animation: progressAnimation 3s linear forwards; /* 3s duration */
+}
