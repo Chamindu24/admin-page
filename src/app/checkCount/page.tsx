@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Register necessary chart elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function checkCount() {
+export default function CheckCount() {
   const [checkInData, setCheckInData] = useState({
     checkedInPercentage: 0,
     checkedInCount: 0,

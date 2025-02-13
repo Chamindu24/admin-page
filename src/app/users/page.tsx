@@ -25,16 +25,7 @@ import {
 
 
 
-// Spinner component for loading state
-function Spinner() {
-  return (
-    <div className="flex justify-center items-center py-10">
-      <div
-         className="w-10 h-10 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"
-       ></div>
-    </div>
-  );
-}
+
 
 
 
@@ -55,7 +46,19 @@ interface User {
   isRejected: boolean; // Add status property
 }
 
-// Modal component for image preview
+
+
+
+export default function UsersList() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [filterValue, setFilterValue] = useState<string>(""); // Add filter state
+  const [modalFileURL, setModalFileURL] = useState<string | null>(null);
+  const [modalFileType, setModalFileType] = useState<"image" | "pdf" | null>(null);
+
+
+
+  // Modal component for image preview
 
 
 function FileModal({
@@ -103,12 +106,16 @@ function FileModal({
 
 
 
-export default function UsersList() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [filterValue, setFilterValue] = useState<string>(""); // Add filter state
-  const [modalFileURL, setModalFileURL] = useState<string | null>(null);
-  const [modalFileType, setModalFileType] = useState<"image" | "pdf" | null>(null);
+  // Spinner component for loading state
+function Spinner() {
+  return (
+    <div className="flex justify-center items-center py-10">
+      <div
+         className="w-10 h-10 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"
+       ></div>
+    </div>
+  );
+}
   
   // Fetch data
   useEffect(() => {
