@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
@@ -21,12 +22,6 @@ import {
  
   
 } from "@tanstack/react-table";
-
-
-
-
-
-
 
 
 // Define types for the user object
@@ -44,6 +39,7 @@ interface User {
   isApproved: boolean;
   index: string; // Add index from the parent order
   isRejected: boolean; // Add status property
+  createdAt: Date;
 }
 
 
@@ -56,56 +52,135 @@ export default function UsersList() {
   const [modalFileURL, setModalFileURL] = useState<string | null>(null);
   const [modalFileType, setModalFileType] = useState<"image" | "pdf" | null>(null);
 
+  const formatDate = (date: Date | string) => {
+    // If the date is a string, convert it to a Date object
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+  
+    // Check if the parsed date is valid
+    if (!parsedDate || isNaN(parsedDate.getTime())) {
+      return "Invalid Date"; // Fallback for invalid dates
+    }
+  
+    // Format the date
+    return parsedDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long", // Adds the weekday for a more natural feel
+      hour: "2-digit",
+      minute: "2-digit",
+      
+      hour12: true, // Ensures AM/PM format
+    });
+  };
 
+
+  const containerVariants = {
+    hidden: {
+      opacity: 0,
+      rotate: 40, // Start with a tilt
+      scale: 0.5, // Start with a smaller scale
+    },
+    visible: {
+      opacity: 1,
+      rotate: [40, -10, 5, -2, 0], // Add some bounce with keyframes
+      scale: [0.5, 1.1, 0.9, 1.03, 1], // Add some scaling bounce with keyframes
+      transition: {
+        duration: 2, // Duration of the whole animation
+        type: "spring",
+        stiffness: 500,
+        damping: 20,
+      },
+    },
+    exit: {
+      opacity: 0,
+      rotate: 40,
+      scale: 0.5,
+      transition: {
+        duration: 1, // Duration of the exit animation
+        type: "spring",
+        stiffness: 500,
+        damping: 30,
+      },
+    },
+  };
+  
+  const overlayVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0, transition: { duration: 0.5 } },
+  };
 
   // Modal component for image preview
 
 
-function FileModal({
-  isOpen,
-  fileURL,
-  fileType,
-  onClose,
-}: {
-  isOpen: boolean;
-  fileURL: string;
-  fileType: "image" | "pdf" | null;
-  onClose: () => void;
-}) {
-  if (!isOpen || !fileURL) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-900 to-transparent opacity-75"></div>
-      <div className="relative bg-gray-800 bg-opacity-80 rounded-lg shadow-2xl p-8 border border-gray-700">
-        <button
-          onClick={onClose}
-          className="absolute top-1 right-1 bg-red-500 text-white px-2 py-0.5 rounded-full hover:bg-red-600 transition duration-300"
-        >
-          ✖
-        </button>
-        <div className="relative overflow-hidden">
-          {fileType === "image" ? (
-            <img
-              src={fileURL}
-              alt="Preview"
-              className="w-[800px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
-            />
-          ) : fileType === "pdf" ? (
-            <iframe
-              src={fileURL}
-              className="w-[800px] h-[500px] rounded-lg border border-gray-700"
-              title="PDF Preview"
-            ></iframe>
-          ) : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
+  function FileModal({
+    isOpen,
+    fileURL,
+    fileType,
+    onClose,
+  }: {
+    isOpen: boolean;
+    fileURL: string;
+    fileType: "image" | "pdf" | null;
+    onClose: () => void;
+  }) {
+    return (
+      <AnimatePresence>
+        {isOpen && fileURL && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              key="overlay"
+              variants={overlayVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+              onClick={onClose} // Close modal when clicking outside
+            >
+              {/* Modal Container */}
+              <motion.div
+                key="modal"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="relative bg-gray-800 bg-opacity-80 rounded-lg shadow-2xl p-8 border border-gray-700"
+                onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from closing it
+              >
+                {/* Close Button */}
+                <button
+                  onClick={onClose}
+                  className="absolute top-1 right-1 bg-red-500 text-white px-2 py-0.5 rounded-full hover:bg-red-600 transition duration-300"
+                >
+                  ✖
+                </button>
+  
+                {/* Content */}
+                <div className="relative overflow-hidden">
+                  {fileType === "image" ? (
+                    <img
+                      src={fileURL}
+                      alt="Preview"
+                      className="w-[800px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
+                    />
+                  ) : fileType === "pdf" ? (
+                    <iframe
+                      src={fileURL}
+                      className="w-[800px] h-[500px] rounded-lg border border-gray-700"
+                      title="PDF Preview"
+                    ></iframe>
+                  ) : null}
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    );
+  }
+  
   // Spinner component for loading state
 function Spinner() {
   return (
@@ -332,6 +407,7 @@ function Spinner() {
           
           <p>Food List: {row.original.foodList.join(", ") || "N/A"}</p>
           <p>Total Price: ${row.original.totalPrice}</p>
+          <p>Placed on: <span className="font-light">{formatDate(row.original.createdAt)}</span></p>
         </div>
       ),
     },

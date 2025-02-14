@@ -2,6 +2,11 @@
 
 import { FlipTextDemo, RetroGridDemo, TypingAnimationDemo } from "@/components/Home/Hero";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
+import { motion } from "framer-motion";
+
+
+
+
 
 
 export default function Page() {
@@ -29,9 +34,14 @@ export default function Page() {
               }}
             > 
               {/* Hero Text Section */}
-              <div className="mt-24">
-                <FlipTextDemo />
-              </div>
+                <motion.div
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1 }}
+                  className="mt-32"
+                >
+                  <FlipTextDemo />
+                </motion.div>
               
               {/* Retro Grid Background */}
               <div className="absolute inset-0 z-0">
@@ -39,32 +49,42 @@ export default function Page() {
               </div>
 
               {/* Button Section */}
-              <div className="z-10 flex flex-col items-center justify-center mt-40 space-y-8">
-              <div className="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0 items-center justify-center">
-                  <button
-                    onClick={handleNavigateToUsers}
-                    className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl  hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
-                  >
-                    See All Users
-                  </button>
+             {/* Button Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="z-10 flex flex-col items-center justify-center mt-40"
+        >
+          <div className="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0 items-center justify-center">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleNavigateToUsers}
+              className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
+            >
+              Browse Users
+            </motion.button>
 
-                  
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleNavigateTocheckIn}
+              className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-10 py-8 text-white font-bold text-3xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
+            >
+              User Verification
+            </motion.button>
 
-                  <button
-                    onClick={handleNavigateTocheckIn}
-                    className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl  hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
-                  >
-                    Check Users
-                  </button>
-
-                  <button
-                    onClick={handleNavigateTocheckCoun}
-                    className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl  hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
-                  >
-                    Arrival Insights
-                  </button>
-                </div>   
-              </div>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleNavigateTocheckCoun}
+              className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
+            >
+              User Analytics
+            </motion.button>
+          </div>
+        </motion.div>
 
               {/* Typing Animation Section */}
               <TypingAnimationDemo />

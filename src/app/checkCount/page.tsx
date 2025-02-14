@@ -1,11 +1,28 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useMemo,useRef } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { Input } from "@/components/ui/input"
 
 // Register necessary chart elements
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Define types for the user object
+interface CheckedInUser {
+  username: string;
+  nic: string;
+  checkInTime: string;
+}
 
 export default function CheckCount() {
   const [checkInData, setCheckInData] = useState({
@@ -15,8 +32,42 @@ export default function CheckCount() {
     checkedInUsers: [] as Array<{ username: string; nic: string; checkInTime: string }>,
   });
   const [message, setMessage] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+  
   const [isLoading, setIsLoading] = useState(true);
+  const [filterValue, setFilterValue] = useState<string>(""); // Add filter state
+  const formatDate = (date: Date | string) => {
+    // If the date is a string, convert it to a Date object
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+  
+    // Check if the parsed date is valid
+    if (!parsedDate || isNaN(parsedDate.getTime())) {
+      return "Invalid Date"; // Fallback for invalid dates
+    }
+  
+    // Format the date
+    return parsedDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long", // Adds the weekday for a more natural feel
+      hour: "2-digit",
+      minute: "2-digit",
+      
+      hour12: true, // Ensures AM/PM format
+    });
+  };
+
+  // Filter users based on the filter value (username and NIC number)
+  const filteredUsers = useMemo(
+    () =>
+      checkInData.checkedInUsers.filter(
+        (user) =>
+          user.username.toLowerCase().includes(filterValue.toLowerCase()) ||
+          user.nic.toLowerCase().includes(filterValue.toLowerCase())
+      ),
+    [checkInData.checkedInUsers, filterValue]
+  );
+  const tableSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchCheckInData() {
@@ -67,16 +118,39 @@ export default function CheckCount() {
     }
   };
 
-   return (
-    <div>
+  const scrollToTableSection = () => {
+    if (tableSectionRef.current) {
+      tableSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Define columns for the table
+  const columns: ColumnDef<CheckedInUser>[] = [
+    {
+      accessorKey: "username",
+      header: "Username",
+    },
+    {
+      accessorKey: "nic",
+      header: "NIC",
+    },
+    {
+      accessorKey: "checkInTime",
+      header: "Checked-in Time",
+      cell: ({ row }) => formatDate(row.original.checkInTime),
+    },
+  ];
+
+  // Create the table instance
+const table = useReactTable({
+  data: filteredUsers, // Use filteredUsers instead of checkInData.checkedInUsers
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+});
+
+  return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
       {message && <p className="text-red-500">{message}</p>}
-
-      {isLoading && (
-        <div className="flex justify-center  items-center py-10">
-          <div className="w-10 h-10 border-4 border-dashed  rounded-full animate-spin border-yellow-500"></div>
-        </div>
-      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -84,32 +158,41 @@ export default function CheckCount() {
         transition={{ duration: 1 }}
         className="w-full max-w-4xl"
       >
-        <h2 className="text-6xl font-bold text-center mb-6 tracking-wider bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 text-transparent bg-clip-text drop-shadow-lg">
-  Live Check-in Status 
-</h2>
+        <h2 className="text-6xl font-bold text-center mt-6 tracking-wider bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 text-transparent bg-clip-text drop-shadow-lg">
+          Live Check-in Status
+        </h2>
 
-        <div className="flex items-center justify-between w-full mt-4">
+        <div className="flex items-center justify-between w-full mt-8">
           {/* Left Side: Check-in Percentage & Button */}
           <motion.div
             initial={{ x: -150, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 1.8 }}
-            className="text-left"
+            className="text-left mt-8"
           >
-            <p className="text-7xl tracking-wider hover:scale-105 transition duration-1000 font-bold text-green-400">
-              {checkInData.checkedInPercentage.toFixed(2)}%
-            </p>
-            <p className="text-xl text-gray-200 hover:scale-105 transition duration-500 mt-2">
-              {checkInData.checkedInCount} out of {checkInData.totalCount} guests checked in
-            </p>
+            {isLoading ? (
+              <div className="animate-pulse">
+                <div className="h-16 w-40 bg-gray-700 rounded-md"></div>
+                <div className="h-6 w-72 bg-gray-700 rounded-md mt-2"></div>
+                <div className="h-12 w-48 bg-gray-800 rounded-md mt-6"></div>
+              </div>
+            ) : (
+              <>
+                <p className="text-7xl tracking-wider hover:scale-105 transition duration-1000 font-bold text-green-400">
+                  {checkInData.checkedInPercentage.toFixed(2)}%
+                </p>
+                <p className="text-xl text-gray-200 hover:scale-105 transition duration-500 mt-2">
+                  {checkInData.checkedInCount} out of {checkInData.totalCount} guests checked in
+                </p>
 
-            {/* Button to show popup */}
-            <button
-              onClick={() => setShowPopup(true)}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 text-xl rounded-xl mt-12 hover:from-blue-700 hover:to-blue-800 transition-all hover:scale-105 duration-1000"
-            >
-              View Check-in List
-            </button>
+                <button
+                   onClick={scrollToTableSection}
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 text-xl rounded-xl mt-6 hover:from-blue-700 hover:to-blue-800 transition-all hover:scale-105 duration-1000"
+                >
+                  View Check-In List
+                </button>
+              </>
+            )}
           </motion.div>
 
           {/* Right Side: Pie Chart with Animation */}
@@ -119,35 +202,39 @@ export default function CheckCount() {
             transition={{ duration: 1.8 }}
             className="w-1/3"
           >
-            <div className="w-96 h-96 mx-auto">
-              <Pie
-                data={pieChartData}
-                options={{
-                  plugins: {
-                    tooltip: {
-                      enabled: true,
-                      callbacks: {
-                        label: (context) => {
-                          const label = context.label || "";
-                          const value = context.raw || 0;
-                          return `${label}: ${value}%`;
+            {isLoading ? (
+              <div className="w-96 h-96 bg-gray-800 animate-pulse rounded-full"></div>
+            ) : (
+              <div className="w-96 h-96 mx-auto">
+                <Pie
+                  data={pieChartData}
+                  options={{
+                    plugins: {
+                      tooltip: {
+                        enabled: true,
+                        callbacks: {
+                          label: (context) => {
+                            const label = context.label || "";
+                            const value = context.raw || 0;
+                            return `${label}: ${value}%`;
+                          },
+                        },
+                        bodyFont: {
+                          size: 18,
                         },
                       },
-                      bodyFont: {
-                        size: 18,
+                      legend: {
+                        position: "bottom",
+                        labels: {
+                          color: "#fff",
+                          font: { size: 16 },
+                        },
                       },
                     },
-                    legend: {
-                      position: "bottom",
-                      labels: {
-                        color: "#fff",
-                        font: { size: 16 },
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
+                  }}
+                />
+              </div>
+            )}
           </motion.div>
         </div>
 
@@ -156,63 +243,119 @@ export default function CheckCount() {
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.8, ease: "easeOut" }}
-          className="w-full bg-gray-700 rounded-full h-4 mb-4 mt-12 overflow-hidden"
+          className="w-full bg-gray-700 rounded-full h-4  mt-12  overflow-hidden"
         >
-          <motion.div
-            initial={{ width: "0%" }}
-            animate={{ width: `${checkInData.checkedInPercentage}%` }}
-            transition={{ duration: 1.8, ease: "easeOut" }}
-            className="h-full bg-gradient-to-r from-green-300 to-green-600 rounded-full"
-          />
+          {isLoading ? (
+            <div className="h-full w-full bg-gray-800 animate-pulse rounded-full"></div>
+          ) : (
+            <motion.div
+              initial={{ width: "0%" }}
+              animate={{ width: `${checkInData.checkedInPercentage}%` }}
+              transition={{ duration: 1.8, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-green-300 to-green-600 rounded-full"
+            />
+          )}
         </motion.div>
 
-        <p className="text-center text-lg text-yellow-100 mb-4 mt-4">{getDynamicText()}</p>
+        <p className="text-center text-lg text-yellow-100  mt-4">{getDynamicText()}</p>
       </motion.div>
 
-      {/* Popup for showing checked-in users */}
-      <AnimatePresence>
-        {showPopup && (
+          {/* Table Below Progress Bar */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90"
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="bg-gray-800 text-white p-8 rounded-lg w-[800px] max-h-[400px] overflow-y-auto relative"
-            >
-              <h3 className="text-xl text-center font-semibold mb-4">Checked-in Users</h3>
-              <button
-                onClick={() => setShowPopup(false)}
-                className="absolute top-2 right-3 text-2xl font-semibold hover:text-red-600"
-              >
-                X
-              </button>
-              <ul className="space-y-4">
-                {checkInData.checkedInUsers
-                  .slice()
-                  .sort((a, b) => new Date(a.checkInTime).getTime() - new Date(b.checkInTime).getTime()) // Sort by check-in time
-                  .map((user, index) => (
-                    <li key={index} className="flex justify-between border-b pb-2">
-                      <span>{user.username}</span>
-                      <span className="flex flex-col justify-end">{user.nic}</span>
-                      <span>{new Date(user.checkInTime).toLocaleString()}</span>
-                    </li>
-                  ))}
-              </ul>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ref={tableSectionRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="w-full mt-12"
+        >
+          <h3 className="text-3xl font-bold tracking-wider text-center ">Checked-In Users</h3>
+          <div className="flex items-center py-5 px-32 relative">
+              <div className="relative max-w-sm w-full">
+                {/* Search icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
 
+                {/* Input field */}
+                <Input
+                  placeholder="Filter by username and NIC number"
+                  value={filterValue}
+                  onChange={(event) => setFilterValue(event.target.value)}
+                  className="pl-10 pr-10 w-full rounded-lg border border-gray-400 bg-gray-800 text-gray-100 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500 transition-all duration-300"
+                />
+
+                {/* Clear button (visible only when there's input) */}
+                {filterValue && (
+                  <button
+                    onClick={() => setFilterValue("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors duration-200"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          <div className="rounded-2xl overflow-hidden border border-gray-600 shadow-lg mx-auto max-w-7xl">
+            <Table>
+              <TableHeader className="bg-gray-800 text-gray-300">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="font-bold text-lg text-gray-100 bg-gray-800 p-4"
+                        style={{ width: header.column.getSize() }} // Set column width
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="hover:bg-gray-800 transition-colors duration-200 ease-in-out">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="text-base text-gray-300 p-4"
+                        style={{ width: cell.column.getSize() }} // Set column width
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </motion.div>
       
+       
+
+      <footer className="w-full text-center text-black tracking-widest font-mono bg-yellow-400 to-yellow-400 py-2 mt-14 relative overflow-hidden text-base md:text-base">
+        &copy; UoMLeos 2025, All rights reserved.
+      </footer>
     </div>
-    <footer className="w-full  text-center text-black  tracking-widest font-mono bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 py-1 mb-1 text-base md:text-base">
-    &copy; UoMLeos 2025, All rights reserved.
-</footer>
-</div>
   );
 }

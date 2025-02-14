@@ -11,17 +11,29 @@ connect();
 export async function GET() {
   try {
     // Fetch documents with `users` and `seats`, including the top-level `index`
-    const orders = await User.find().select("users seats index");
+    const orders = await User.find().select("users seats index createdAt");
 
     // Flatten the data, including `index` for each user
     const flattenedData = orders.flatMap(order => 
-      order.users.map((user: any, idx: number) => ({
-        ...user.toObject(),          // Convert Mongoose document to plain object
-        seatNumber: order.seats[idx] || "N/A", // Map seat number by index
-        index: order.index || "N/A" // Add top-level `index` to each user
-      }))
-    );
+      order.users.map((user: any, idx: number) => {
+        const userObject = user.toObject();
+        const seatNumber = order.seats[idx] || "N/A";
+        const index = order.index || "N/A";
+        const createdAt = order.createdAt || "N/A";
 
+        
+
+        return {
+          ...userObject,
+          seatNumber,
+          index,
+          createdAt,
+        };
+      })
+    );
+    
+      
+    
     // Return the flattened data as JSON
     // console.log("Fetched users:", flattenedData);
     return NextResponse.json({ users: flattenedData },

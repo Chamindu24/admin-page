@@ -56,6 +56,14 @@ export default function CheckInPage() {
   async function handleCheckInCheckOut() {
     if (!user || !user.seats.length) return;
 
+    // Disable checkout (only allow check-in)
+  if (user.isCheckedIn) {
+    setMessage("Check-out is disabled.");
+    setIsError(true);
+    setShowModal(false);
+    return;
+  }
+
     setIsProcessing(true);
     setShowModal(false);
 
@@ -80,11 +88,14 @@ export default function CheckInPage() {
           prevUser
             ? {
                 ...prevUser,
-                isCheckedIn: !prevUser.isCheckedIn,
+                //isCheckedIn: !prevUser.isCheckedIn,
+                isCheckedIn: true, // Prevents checkout
                 checkInTime: data.checkInTime,
               }
             : null
         );
+
+        
       }
     } catch (error) {
       setIsError(true);
