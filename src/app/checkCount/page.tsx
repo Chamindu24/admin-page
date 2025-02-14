@@ -83,7 +83,7 @@ export default function CheckCount() {
         transition={{ duration: 1 }}
         className="w-full max-w-4xl"
       >
-        <h2 className="text-6xl font-bold text-center mb-6 tracking-wider bg-gradient-to-r from-yellow-300 via-red-400 to-purple-200 text-transparent bg-clip-text drop-shadow-lg">
+        <h2 className="text-6xl font-bold text-center mb-6 tracking-wider bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 text-transparent bg-clip-text drop-shadow-lg">
   Live Check-in Status 
 </h2>
 
@@ -155,17 +155,17 @@ export default function CheckCount() {
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.8, ease: "easeOut" }}
-          className="w-full bg-gray-700 rounded-full h-6 mb-4 mt-12 overflow-hidden"
+          className="w-full bg-gray-700 rounded-full h-4 mb-4 mt-12 overflow-hidden"
         >
           <motion.div
             initial={{ width: "0%" }}
             animate={{ width: `${checkInData.checkedInPercentage}%` }}
             transition={{ duration: 1.8, ease: "easeOut" }}
-            className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
+            className="h-full bg-gradient-to-r from-green-300 to-green-600 rounded-full"
           />
         </motion.div>
 
-        <p className="text-center text-lg text-yellow-200 mb-4 mt-4">{getDynamicText()}</p>
+        <p className="text-center text-lg text-yellow-100 mb-4 mt-4">{getDynamicText()}</p>
       </motion.div>
 
       {/* Popup for showing checked-in users */}

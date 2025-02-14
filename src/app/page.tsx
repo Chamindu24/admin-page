@@ -2,7 +2,7 @@
 
 import { FlipTextDemo, RetroGridDemo, TypingAnimationDemo } from "@/components/Home/Hero";
 import { useRouter } from "next/navigation"; // Use next/navigation for App Router
-import { motion } from "framer-motion";
+
 
 export default function Page() {
   const router = useRouter(); // Initialize the router
@@ -12,6 +12,9 @@ export default function Page() {
   };
   const handleNavigateTocheckCoun = () => {
     router.push("/checkCount"); // Navigate to the /users page
+  };
+  const handleNavigateTocheckIn = () => {
+    router.push("/checkin"); // Navigate to the /users page
   };
 
 
@@ -29,7 +32,7 @@ export default function Page() {
               <div className="mt-24">
                 <FlipTextDemo />
               </div>
-
+              
               {/* Retro Grid Background */}
               <div className="absolute inset-0 z-0">
                 <RetroGridDemo />
@@ -43,6 +46,15 @@ export default function Page() {
                     className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl  hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
                   >
                     See All Users
+                  </button>
+
+                  
+
+                  <button
+                    onClick={handleNavigateTocheckIn}
+                    className="rounded-full bg-gradient-to-r from-black via-gray-800 to-black px-12 py-6 text-white font-bold text-2xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl  hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 border-2 border-white"
+                  >
+                    Check Users
                   </button>
 
                   <button

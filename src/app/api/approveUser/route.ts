@@ -34,19 +34,16 @@ export async function PATCH(req: Request) {
     const seatNumber = updatedOrder.seats[updatedOrder.users.indexOf(approvedUser)] || "N/A";
     approvedUser.seatNumber = seatNumber;
 
+    approvedUser.index=updatedOrder.index;
+
     // Generate QR Code
-    /*const qrCodeData = `
+    const qrCodeData = `
       Username: ${approvedUser.username}
       WhatsApp: ${approvedUser.whatsapp}
       Department: ${approvedUser.department}
-    `.trim();*/
-    // Generate QR Code with JSON data
-    const qrCodeData = JSON.stringify({
-      username: approvedUser.username,
-      whatsapp: approvedUser.whatsapp,
-      department: approvedUser.department,
-    });
-
+      NIC:${approvedUser.index}
+    `.trim();
+    
     const qrCodeBuffer = await QRCode.toBuffer(qrCodeData);
     
     // Send Email
