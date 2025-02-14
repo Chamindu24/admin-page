@@ -68,6 +68,7 @@ export default function CheckCount() {
   };
 
    return (
+    <div>
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
       {message && <p className="text-red-500">{message}</p>}
 
@@ -206,6 +207,12 @@ export default function CheckCount() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      
     </div>
+    <footer className="w-full  text-center text-black  tracking-widest font-mono bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 py-1 mb-1 text-base md:text-base">
+    &copy; UoMLeos 2025, All rights reserved.
+</footer>
+</div>
   );
 }

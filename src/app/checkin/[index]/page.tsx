@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Check, LogOut, Loader2, X } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { Check, LogOut, Loader2, X,ArrowLeft  } from "lucide-react";
 
 interface User {
   username: string;
@@ -18,6 +18,7 @@ interface User {
 
 export default function CheckInPage() {
   const { index } = useParams<{ index: string }>();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -95,6 +96,15 @@ export default function CheckInPage() {
 
   return (
     <div className="flex flex-col items-center p-10 justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+
+         {/* Back Button */}
+    <button
+      onClick={() => router.back()}
+      className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md transition-transform transform hover:scale-105"
+    >
+      <ArrowLeft className="h-5 w-5" />
+      <span className="hidden sm:inline-block">Back</span>
+    </button>
       <h1 className="text-3xl md:text-5xl tracking-wider font-semibold mb-8 text-yellow-400 animate-bounce">
         Check-In System
       </h1>
@@ -105,6 +115,8 @@ export default function CheckInPage() {
         </div>
       ) : user ? (
         <div className="bg-gray-800 p-6 sm:p-8 rounded-2xl flex flex-col items-center justify-center shadow-2xl w-full max-w-xs sm:max-w-md transform transition-transform hover:scale-105 duration-300">
+          
+          
           {/* User Details */}
           <div className="text-center">
             <p className="text-2xl tracking-widest font-semibold">{user.username}</p>
@@ -165,6 +177,7 @@ export default function CheckInPage() {
               </>
             )}
           </button>
+          
         </div>
       ) : (
         <p className="text-red-500">{message}</p>
@@ -177,6 +190,7 @@ export default function CheckInPage() {
           }`}
         >
           <p>{message}</p>
+          
         </div>
       )}
 
@@ -213,6 +227,7 @@ export default function CheckInPage() {
           </div>
         </div>
       )}
+      
     </div>
   );
 }

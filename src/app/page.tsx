@@ -68,7 +68,10 @@ export default function Page() {
 
               {/* Typing Animation Section */}
               <TypingAnimationDemo />
-            </div>   
+            </div> 
+            <footer className="w-full  text-center text-black  tracking-widest font-mono bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 py-1 mb-1 text-base md:text-base">
+              &copy; UoMLeos 2025, All rights reserved.
+            </footer>  
     </div>
   );
 }
