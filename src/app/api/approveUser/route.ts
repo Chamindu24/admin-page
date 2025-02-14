@@ -35,13 +35,20 @@ export async function PATCH(req: Request) {
     approvedUser.seatNumber = seatNumber;
 
     // Generate QR Code
-    const qrCodeData = `
+    /*const qrCodeData = `
       Username: ${approvedUser.username}
       WhatsApp: ${approvedUser.whatsapp}
       Department: ${approvedUser.department}
-    `.trim();
-    const qrCodeBuffer = await QRCode.toBuffer(qrCodeData);
+    `.trim();*/
+    // Generate QR Code with JSON data
+    const qrCodeData = JSON.stringify({
+      username: approvedUser.username,
+      whatsapp: approvedUser.whatsapp,
+      department: approvedUser.department,
+    });
 
+    const qrCodeBuffer = await QRCode.toBuffer(qrCodeData);
+    
     // Send Email
     const sender = { name: 'Celestia 2024', address: 'chamindusathsara28@gmail.com' };
     const recipient = { name: approvedUser.username, address: approvedUser.email };
