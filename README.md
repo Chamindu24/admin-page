@@ -1,74 +1,36 @@
-# Admin Page
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Welcome to the Admin Page project! This project is designed to provide a user-friendly interface for managing user check-ins and viewing user analytics. It is built using Next.js, React, and various other modern web technologies.
+## Getting Started
 
-## Table of Contents
+First, run the development server:
 
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Features
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- **User Check-In System**: Allows users to check in and view their check-in status.
-- **User Analytics**: Provides analytics on user check-ins, including a pie chart and a detailed list of checked-in users.
-- **Responsive Design**: The interface is fully responsive and works on all devices.
-- **Animations**: Smooth animations using Framer Motion for a better user experience.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Installation
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-To get started with the project, follow these steps:
+## Learn More
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/your-username/admin-page.git
-    cd admin-page
-    ```
+To learn more about Next.js, take a look at the following resources:
 
-2. **Install dependencies**:
-    ```bash
-    npm install
-    ```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-3. **Run the development server**:
-    ```bash
-    npm run dev
-    ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-4. **Open your browser** and navigate to `http://localhost:3000`.
+## Deploy on Vercel
 
-## Usage
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Browse Users**: Navigate to the [users](http://_vscodecontentref_/1) page to view and manage users.
-- **User Verification**: Navigate to the `/checkin` page to verify user check-ins.
-- **User Analytics**: Navigate to the `/checkCount` page to view user check-in analytics.
-
-## Project Structure
-
-
-## Technologies Used
-
-- **Next.js**: A React framework for server-side rendering and static site generation.
-- **React**: A JavaScript library for building user interfaces.
-- **Framer Motion**: A library for animations in React.
-- **Chart.js**: A library for creating charts.
-- **Tailwind CSS**: A utility-first CSS framework for styling.
-
-## Contributing
-
-Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
-
-1. **Fork the repository**.
-2. **Create a new branch**: `git checkout -b feature-name`.
-3. **Make your changes**.
-4. **Commit your changes**: `git commit -m 'Add some feature'`.
-5. **Push to the branch**: `git push origin feature-name`.
-6. **Open a pull request**.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
