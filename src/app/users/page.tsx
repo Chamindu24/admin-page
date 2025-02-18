@@ -163,12 +163,12 @@ export default function UsersList() {
                     <img
                       src={fileURL}
                       alt="Preview"
-                      className="w-[800px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
+                      className="w-[600px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
                     />
                   ) : fileType === "pdf" ? (
                     <iframe
                       src={fileURL}
-                      className="w-[800px] h-[500px] rounded-lg border border-gray-700"
+                      className="w-[700px] h-[500px] rounded-lg border border-gray-700"
                       title="PDF Preview"
                     ></iframe>
                   ) : null}
