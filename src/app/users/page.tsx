@@ -163,7 +163,7 @@ export default function UsersList() {
                     <img
                       src={fileURL}
                       alt="Preview"
-                      className="w-[600px] h-[500px] object-fill rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
+                      className="w-full h-full max-h-screen object-contain rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
                     />
                   ) : fileType === "pdf" ? (
                     <iframe
@@ -406,7 +406,7 @@ function Spinner() {
           <p>Membership Status: {row.original.department}</p>
           
           <p>Food List: {row.original.foodList.join(", ") || "N/A"}</p>
-          <p>Total Price: ${row.original.totalPrice}</p>
+          <p>Total Price: Rs.{row.original.totalPrice}</p>
           <p>Placed on: <span className="font-light">{formatDate(row.original.createdAt)}</span></p>
         </div>
       ),
