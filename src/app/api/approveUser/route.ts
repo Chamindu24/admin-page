@@ -82,7 +82,7 @@ export async function PATCH(req: Request) {
             Thank you for choosing <strong>Celestia 2024!</strong> We look forward to celebrating with you.
           </p>
           
-          <a href="https://leo-candle-night.vercel.app/" 
+          <a href="https://celestia.uomleos.org/" 
             style="display: inline-block; text-decoration: none; background-color: #4A90E2; color: #fff; padding: 12px 20px; border-radius: 5px; font-size: 16px; font-weight: bold;">
             View Event Details
           </a>
