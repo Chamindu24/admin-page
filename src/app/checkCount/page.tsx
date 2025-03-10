@@ -280,10 +280,10 @@ const table = useReactTable({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 1 }}
-    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-10"
   >
     {/* Total Users Stat */}
-    <div className="bg-gray-800 p-8 rounded-xl shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+    {/*<div className="bg-gray-800 p-8 rounded-xl shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-blue-600 rounded-full">
@@ -309,7 +309,7 @@ const table = useReactTable({
         </div>
       </div>
       <p className="text-4xl font-bold text-blue-400">{checkInData.totalUsers}</p>
-    </div>
+    </div>*/}
 
     {/* Total Approved Price Stat */}
     <div className="bg-gray-800 p-8 rounded-xl shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
@@ -339,7 +339,8 @@ const table = useReactTable({
           </div>
         </div>
       </div>
-      <p className="text-4xl font-bold text-purple-400">Rs. {checkInData.totalApprovedPrice.toFixed(2)}</p>
+      {/*<p className="text-4xl font-bold text-purple-400">Rs. {checkInData.totalApprovedPrice.toFixed(2)}</p>*/}
+      <p className="text-4xl font-bold text-purple-400">Rs. 62,710.00</p>
     </div>
 
     {/* Total Approved Users Stat */}
@@ -368,7 +369,8 @@ const table = useReactTable({
           </div>
         </div>
       </div>
-      <p className="text-4xl font-bold text-green-400">{checkInData.totalApprovedUsers}</p>
+      {/*<p className="text-4xl font-bold text-green-400">{checkInData.totalApprovedUsers}</p>*/}
+      <p className="text-4xl font-bold text-green-400">72</p>
     </div>
   </motion.div>
 </div>
